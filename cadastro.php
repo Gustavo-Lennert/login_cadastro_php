@@ -1,7 +1,3 @@
-<?php
-    require_once './control/validaCad.php';
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
@@ -11,73 +7,71 @@
         <link rel="stylesheet" href="./style/bootstrap.css">
         <link rel="shortcut icon" href="./imagens/icon_pc.png" type="image/x-icon">
         <link rel="stylesheet" href="./style/style.css">
+
+        <!-- JQuery -->
+        <script src="./js/jquery.js" type="text/javascript"></script>
+
+        <!-- Sweet Alert -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <title>Cadastro</title>
     </head>
     <body>
         <div class="main ">
             <div class="row">
                 <div class="col-md-7">
-                    <form action="./control/validaCad.php" method="POST">
-                        <img src="./imagens/img_cad.png" alt="imgCad" id="imgCad">
+                    <form action="#" method="POST" id="cadast" name="cadastrar">
                         <h1>Cadastro</h1>
-                        <label>Usuário</label>
-                        <br>
                         <input class="form-control" type="text" id="user" name="user" placeholder="Usuário" >
-                        <br>
-                        <label>E-mail</label>
                         <br>
                         <input class="form-control" type="text" id="email" name="email" placeholder="E-mail" >
                         <br>
-                        <label>Celular</label>
-                        <br>
                         <input class="form-control" type="number" id="cel" name="cel" placeholder="Celular" >
-                        <br>
-                        <label>Senha</label>
                         <br>
                         <input class="form-control" type="password" id="senha" name="senha" placeholder="Senha" >
                         <br>
-                        <button  name="cadastrar" type="submit">Cadastrar</button>
+                        <input class="btn" type="button" name="cadastrar" value="Cadastrar" onclick="cadUser()">
+                        <input type="hidden" name="cadastrar" value="cadastrar">
                         <br>
                         <p>Já tem um cadastro?<br><a href="login.php"> Clique aqui para logar</p></a>
                         <!-- Mensagens de validação -->
-                        <?php
-                        //Validação se a sessão está ativa
-                            if(isset( $_SESSION['msg'])){
-                            //Armazenando o valor passado para sessão 'msg' a variável $msg
-                            $msg = $_SESSION['msg'];
-        
-                            if($msg == 1){ ?>
-                                <div class="alert alert-success" role="alert">
-                                    Cadastro efetuado com sucesso!
-                                </div>
-                            <?php unset($_SESSION['msg']);
-                            }
-                            elseif($msg == 2){
-                            ?>
-                                <div class="alert alert-danger" role="alert" >
-                                    Não foi possível realizar o cadastro
-                                </div>
-                            <?php unset($_SESSION['msg']);
-                            }
-                            elseif($msg == 3){
-                            ?>
-                                <div class="alert alert-warning" role="alert">
-                                    Preencha todos os campos!
-                                </div>
-                            <?php unset($_SESSION['msg']);
-                            }
-                            elseif($msg == 4){
-                            ?>
-                                <div class = "alert alert-warning" role="alert">
-                                    Dados de usuário já existentes!
-                                </div>
-                            <?php unset($_SESSION['msg']);
-                            }
-                            }
-                        ?>
+                       
                     </form>
                 </div>
             </div>
         </div>
+        <script>
+            function cadUser(){
+                let dados = $('#cadast').serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: './control/validaCad.php',
+                    data: dados,
+                    success:function(json){
+
+                        if(json.icon == 'success'){
+                            swal.fire({
+                                title: json.msg,
+                                icon: json.icon,
+                                html: '<a href="login.php"><button class="btn">Ok</button></a>',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                            });
+                        }else{
+                            swal.fire({
+                                title: json.msg,
+                                icon: json.icon,
+                                showConfirmButton: true,
+                                allowOutsideClick: true,
+                            });
+                        }
+                    },
+                    error: function(error){
+                        console.log(error);
+                    },
+                });
+            }
+        </script>
     </body>
 </html> 

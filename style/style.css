@@ -90,7 +90,7 @@ label{
 input{
     padding: 10px;
     border: none;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
     box-shadow: 1px 1px 3px black;
     border-radius: 5px;
@@ -103,23 +103,28 @@ input:hover{
     transform: scale(1.1);
 }
 
-button{
-    margin: 12px;
-    padding: 10px;
-    font-size: 14px;
-    color: white;
+.btn, .swal2-styled.swal2-confirm {
+    margin: 12px !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    color: white !important;
     width: 100px;
-    background-color: rgb(60, 90, 187);
-    border-radius: 5px;
-    font-family: arial;
-    border: none;
-    transition:all 0.5s ease ;
+    background-color: rgb(60, 90, 187) !important;
+    border-radius: 5px !important;
+    font-family: arial !important;
+    border: none !important;
+    transition:all 0.5s ease  !important;
 }
 
-button:hover{
+.btn:hover{
     -webkit-transform: scale(1.1);
     -ms-transform: scale(1.1);
     transform: scale(1.1);
+}
+.swal2-styled.swal2-confirm:hover{
+    -webkit-transform: scale(1.1) !important;
+    -ms-transform: scale(1.1) !important;
+    transform: scale(1.1) !important;
 }
 
 form{
@@ -132,7 +137,7 @@ form{
     width: 50%;
     border: 1px solid rgb(82, 100, 127);
     background-color: rgb(190, 217, 243);
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 #imgCad{
@@ -154,8 +159,3 @@ a:hover{
     display: flex;
     justify-content: center;
 }
-
-/* .col-md-12 input{
-    display: flex;
-    justify-content: center;
-} */

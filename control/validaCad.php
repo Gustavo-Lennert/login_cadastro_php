@@ -1,21 +1,14 @@
 <?php
 
-    // require "banco.php"; 
-
-
     //Comando para reportar erros de execução
     error_reporting(E_ALL);
     ini_set("display_errors", 1);
     session_start();
 
-     //Conexão com o banco
-     try {
-        $conexao = new PDO('mysql:host=localhost;dbname=universidade', 'root', '181503');
-        $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch(PDOException $e) {
-        echo 'ERROR: ' . $e->getMessage();
-    }
+    //Conexão com o banco
+    include("banco.php");
 
+    header('Content-Type: application/json charset=utf-8');
 
     if(isset($_POST['cadastrar'])){
 
@@ -31,8 +24,13 @@
 
         //Validação se há campos vazios (não preenchidos), no formulário
         if(empty($user) || empty($email) || empty($cel) || empty($senha)){
-            $_SESSION['msg'] = 3;
-            header('Location: ../cadastro.php');
+            
+            $msg = array(
+                "msg" => "Preencha todos os campos corretamente!",
+                "icon" => "warning",
+            );
+            echo json_encode($msg);
+
         }else{
 
             //Valida se o email digitado é válido
@@ -44,8 +42,11 @@
                 $validaDados->bindValue(':email', $email);
                 $validaDados->execute();
                 if($validaDados->rowCount() > 0){
-                    $_SESSION['msg'] = 4;
-                    header('Location: ../cadastro.php');
+                    $msg = array(
+                        "msg" => "Dados de usuário já existentes!",
+                        "icon" => "warning",
+                    );
+                    echo json_encode($msg);
                 }
                 else{
                     $insertDados = $conexao->prepare('INSERT INTO user (`nome`, `senha`, `email`, `cel`) VALUES(:nome, :senha, :email, :cel)');
@@ -57,19 +58,27 @@
                     $insertDados->execute();
 
                     if($insertDados){
-                        $_SESSION['msg'] = 1;
-                        header('Location: ../cadastro.php');
+                        $msg = array(
+                            "msg" => "Cadastro efetuado com sucesso!",
+                            "icon" => "success",
+                        );
+                        echo json_encode($msg);
                     }else{
-                        $_SESSION['msg'] = 2 ;
-                        header('Location: ../cadastro.php');
+                        $msg = array(
+                            "msg" => "Não foi possível realizar o cadastro, tente novamente!",
+                            "icon" => "error",
+                        );
+                        echo json_encode($msg);
                     }
                     
                 }
             }
             else{
-                $_SESSION['msg'] = 2;
-                
-                header('Location: ../cadastro.php');
+                $msg = array(
+                    "msg" => "Insira um e-mail válido!",
+                    "icon" => "error",
+                );
+                echo json_encode($msg);
             }  
         }   
     }

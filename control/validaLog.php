@@ -1,6 +1,4 @@
 <?php
-
-    // require "banco.php"; 
     
     //Comando para reportar erros de execução
     error_reporting(E_ALL);
@@ -8,14 +6,11 @@
     session_start();
     
     //Conexão com o banco
-    try {
-        $conexao = new PDO('mysql:host=localhost;dbname=universidade', 'root', '181503');
-        $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch(PDOException $e) {
-        echo 'ERROR: ' . $e->getMessage();
-    }
+    include("banco.php");
 
-    if(isset($_POST['login'])){
+    header('Content-Type: application/json charset=utf-8');
+
+    if(isset($_POST['btnLogin'])){
 
         //Atribuição de valores passados do formulário para as variáveis 
         $email = $_POST['email'];
@@ -23,14 +18,17 @@
 
         //Criptograr a senha para validação
         $novaSenha = sha1($senha);
-        
 
         //Validação se há campos vazios (não preenchidos), no formulário
         if(empty($email) || empty($senha)){
-            $_SESSION['msg'] = 1;
-            header('Location: ../login.php');
-        }else{
-
+            $msg = array(
+                "msg" => "Preencha todos os campos corretamente!",
+                "icon" => "warning",
+            );
+            echo json_encode($msg);
+        }
+        
+        else{
             //Valida se o usuário tem cadastro no banco
             $validaDados = $conexao->prepare('SELECT * FROM user WHERE senha = :senha AND email = :email');
             $validaDados->bindValue(':senha', $novaSenha);
@@ -39,11 +37,17 @@
             if($validaDados->rowCount() > 0){
                 $_SESSION['email'] = $email;
                 $_SESSION['senha'] = $senha;
-                header('Location: ../dashboard.php');
-            }
-            else{
-                $_SESSION['msg'] = 2;
-                header('Location: ../login.php');
+                $msg = array(
+                    "msg" => "success",
+                );
+                echo json_encode($msg);
+
+            }else{
+                $msg = array(
+                    "msg" => "Usuário inválido!",
+                    "icon" => "error",
+                );
+                echo json_encode($msg);
             }
         } 
     }   

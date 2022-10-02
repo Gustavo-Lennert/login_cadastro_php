@@ -16,14 +16,33 @@
     </head>
     <body>
         <div class="main">  
-            <div class="alert alert-success text-center" role="alert">
-                Logado com sucesso!
-            </div>
-            <form action="./control/exit.php" method="POST">
-                <button name="sair" type="submit">Sair</button>  
-            </form> 
+            <input value="Sair" name="sair" id="sair" class="btn" type="button" onclick="deslogar()">
+            <input type="hidden" name="sair" value="sair">  
         </div>
     </body>
+    <script>
+        function deslogar(){
+            let dados = $('#sair').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: './exit.php',
+                data: dados,
+                success:function(json){
+                    swal.fire({
+                        title: json.msg,
+                        icon: json.icon,
+                        showConfirmButton: true,
+                        allowOutsideClick: true,
+                    });
+                },
+                error: function(error){
+                    console.log(error);
+                },
+            });
+        }
+
+    </script>
 </html>
 <?php }
 else{

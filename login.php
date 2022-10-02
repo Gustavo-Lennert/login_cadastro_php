@@ -1,7 +1,3 @@
-<?php
-    require_once './control/validaLog.php';
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
@@ -12,62 +8,78 @@
         <link rel="shortcut icon" href="./imagens/icon_pc.png" type="image/x-icon">
         <link rel="stylesheet" href="./style/style.css">
         
+        <!-- JQuery -->
+        <script src="./js/jquery.js" type="text/javascript"></script>
+
+        <!-- Sweet Alert -->
+        <script src="./js/sweetAlert.js"></script>
+
         <title>Login</title>
     </head>
     <body>
         <div class="main">
             <div class="row">
                 <div class="col-md-7">
-                    <form action="./control/validaLog.php" method="POST">
+                    <form action="#" method="POST" id="log" name="login">
                         <img src="./imagens/login.png" alt="imgCad" id="imgCad">
                         <h1 id="titleLog">Login</h1>  
-                        <label>E-mail</label>
-                        <br>
                         <input class="form-control" type="text" id="email" name="email" placeholder="E-mail" >
-                        <br>
-                        <label>Senha</label>
                         <br>
                         <input class="form-control" type="password" id="senha" name="senha" placeholder="Senha" >
                         <br>
-                        <button  name="login" type="submit">Login</button>
+                        <input class="btn" name="btnLogin" type="button" value="Login" onclick="logUser()">
+                        <input type="hidden" name="btnLogin" value="login">
                         <br>
                         <p>Não possui cadastro?<br><a href="cadastro.php">Clique aqui</a></p>
-
-                        <!-- Mensagens de validação -->
-                        <?php
-
-                            //Validação se a sessão está ativa
-                            if(isset( $_SESSION['msg'])){
-
-                                //Armazenando o valor passado para sessão 'msg' a variável $msg
-                                $msg = $_SESSION['msg'];
-                            
-                                if($msg == 1){ ?>
-                                    <div class="alert alert-warning" role="alert">
-                                        Preencha todos os campos!
-                                    </div>
-                                <?php unset($_SESSION['msg']);
-                                } 
-
-                                elseif($msg == 2){
-                                ?>
-                                    <div class="alert alert-danger" role="alert" >
-                                        E-mail ou senha inválidos!
-                                    </div>
-                                <?php unset($_SESSION['msg']);
-                                }
-                                elseif($msg == 3){
-                                    ?>
-                                        <div class="alert alert-danger" role="alert" >
-                                            Você não tem permissão para acessar esta página!
-                                        </div>
-                                    <?php unset($_SESSION['msg']);
-                                }
-                            }
-                        ?>  
                     </form>
                 </div>
             </div>
         </div>
+        <script>
+            function logUser(){
+                let dados = $('#log').serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: './control/validaLog.php',
+                    data: dados,
+                    success:function(json){
+                        if(json.msg == 'success'){
+                            let timerInterval
+                            Swal.fire({
+                            title: 'Login efetuado com success',
+                            icon:'success',
+                            timer: 1500,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading()
+                                const b = Swal.getHtmlContainer().querySelector('b')
+                                timerInterval = setInterval(() => {
+                                b.textContent = Swal.getTimerLeft()
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                                window.location.href = 'dashboard.php';
+                            }
+                            }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                console.log('I was closed by the timer')
+                            }
+                            })
+                            
+                        }else{
+                            swal.fire({
+                                title: json.msg,
+                                icon: json.icon,
+                                showConfirmButton: true,
+                                allowOutsideClick: true,
+                            });
+                        }
+                    },
+                    error: function(json){},
+                });
+            }
+        </script>
     </body>
 </html>
